@@ -10,13 +10,19 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: Maven@3
+- task: AzureResourceManagerTemplateDeployment@3
   inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Enterprise (2a22bfca-1d56-46ef-9b7a-0a93d5552606)'
+    subscriptionId: '2a22bfca-1d56-46ef-9b7a-0a93d5552606'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'CI-CDRGDeplyment'
+    location: 'Central US'
+    templateLocation: 'URL of the file'
+    csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
+    csmParametersFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/parameters.json'
+    deploymentMode: 'Incremental'
+
+    
+    
+    
