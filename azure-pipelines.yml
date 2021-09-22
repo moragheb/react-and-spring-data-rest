@@ -24,10 +24,18 @@ steps:
 
 
 - task: Maven@3
-  displayName: 'Maven pom.xml'
   inputs:
-    mavenPomFile: '$(Parameters.mavenPOMFile)'
-    codeCoverageToolOption: Cobertura       
+    mavenPomFile: 'pom.xml'
+    options: 'clean'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    codeCoverageToolOption: 'Cobertura'
+    javaHomeOption: 'Path'
+    jdkDirectory: '1.6'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
