@@ -31,7 +31,7 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     codeCoverageToolOption: 'Cobertura'
     javaHomeOption: 'Path'
-    jdkDirectory: '1.6'
+    jdkDirectory: '1.8'
     mavenVersionOption: 'Default'
     mavenAuthenticateFeed: false
     effectivePomSkip: false
