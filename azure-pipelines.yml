@@ -20,7 +20,6 @@ steps:
     location: 'Central US'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
-    csmParametersFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/parameters.json'
     deploymentMode: 'Incremental'
 
     
