@@ -5,7 +5,7 @@
     "variables": {
         "Web_App_Name": "[concat(resourceGroup().name,'-App' )]",
         "Web_App_Service_Plan": "[concat('ASP-',resourceGroup().name)]",
-        "ACRContainer": "[concat('ACR',resourceGroup().name)]",
+        "ACRContainer": "[concat('ACR','Springbootimages')]",
         "MYSQLServerName": "[concat(resourceGroup().name,'-SQLServer')]"
     },
     "resources": [
