@@ -31,11 +31,11 @@ steps:
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     codeCoverageToolOption: 'Cobertura'
     javaHomeOption: 'Path'
-    jdkDirectory: '1.8'
     mavenVersionOption: 'Default'
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: false
+    codeCoverageSourceDirectories: src/main    
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
