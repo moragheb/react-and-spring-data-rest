@@ -13,7 +13,7 @@ steps:
     azureResourceManagerConnection: 'Visual Studio Enterprise (2a22bfca-1d56-46ef-9b7a-0a93d5552606)'
     subscriptionId: '2a22bfca-1d56-46ef-9b7a-0a93d5552606'
     action: 'Create Or Update Resource Group'
-    resourceGroupName: 'DevOpsPipeLineRG'
+    resourceGroupName: 'devopslinerg'
     location: 'Central US'
     templateLocation: 'URL of the file'
     csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
