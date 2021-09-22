@@ -1,32 +1,18 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "Web_App_Name": {
-            "defaultValue": "SpringdatawithReact-app",
-            "type": "String"
-        },
-        "Web App Service Plan": {
-            "defaultValue": "ASP-SpringdatawithReact",
-            "type": "String"
-        },
-        "Container_name": {
-            "defaultValue": "SpringContainer",
-            "type": "String"
-        },
-        "mysqlserver-name": {
-            "defaultValue": "springdatawithreact-sqlserver",
-            "type": "String"
-        }
-    },
+    "parameters": {},
     "variables": {
-        "Web_App_Name": "[concat(uniqueString(resourceGroup().id),'-App' )]"
+        "Web_App_Name": "[concat(resourceGroup().name,'-App' )]",
+        "Web_App_Service_Plan": "[concat('ASP-',resourceGroup().name)]",
+        "ACRContainer": "[concat('ACR',resourceGroup().name)]",
+        "MYSQLServerName": "[concat(resourceGroup().name,'-SQLServer')]"
     },
     "resources": [
         {
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2021-06-01-preview",
-            "name": "[parameters('Container_name')]",
+            "name": "[variables('ACRContainer')]",
             "location": "westus",
             "sku": {
                 "name": "Standard",
@@ -63,7 +49,7 @@
         {
             "type": "Microsoft.DBforMySQL/servers",
             "apiVersion": "2017-12-01",
-            "name": "[parameters('mysqlserver-name')]",
+            "name": "[variables('MYSQLServerName')]",
             "location": "westus",
             "sku": {
                 "name": "GP_Gen5_2",
@@ -91,7 +77,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2021-01-15",
-            "name": "[parameters('Web App Service Plan')]",
+            "name": "[variables('Web_App_Service_Plan')]",
             "location": "West US",
             "sku": {
                 "name": "B1",
@@ -117,9 +103,9 @@
         {
             "type": "Microsoft.DBforMySQL/servers/databases",
             "apiVersion": "2017-12-01",
-            "name": "[concat(parameters('mysqlserver-name'), '/springdatawithreact-db')]",
+            "name": "[concat(variables('MYSQLServerName'), '/springdatawithreact-db')]",
             "dependsOn": [
-                "[resourceId('Microsoft.DBforMySQL/servers', parameters('mysqlserver-name'))]"
+                "[resourceId('Microsoft.DBforMySQL/servers', variables('MYSQLServerName'))]"
             ],
             "properties": {
                 "charset": "latin1",
@@ -129,9 +115,9 @@
         {
             "type": "Microsoft.DBforMySQL/servers/firewallRules",
             "apiVersion": "2017-12-01",
-            "name": "[concat(parameters('mysqlserver-name'), '/AllowAllAzureIps')]",
+            "name": "[concat(variables('MYSQLServerName'), '/AllowAllAzureIps')]",
             "dependsOn": [
-                "[resourceId('Microsoft.DBforMySQL/servers', parameters('mysqlserver-name'))]"
+                "[resourceId('Microsoft.DBforMySQL/servers', variables('MYSQLServerName'))]"
             ],
             "properties": {
                 "startIpAddress": "0.0.0.0",
@@ -144,7 +130,7 @@
             "name": "[variables('Web_App_Name')]",
             "location": "West US",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('Web App Service Plan'))]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('Web_App_Service_Plan'))]"
             ],
             "kind": "app,linux,container",
             "properties": {
@@ -161,7 +147,7 @@
                         "hostType": "Repository"
                     }
                 ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('Web App Service Plan'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('Web_App_Service_Plan'))]",
                 "reserved": true,
                 "isXenon": false,
                 "hyperV": false,
