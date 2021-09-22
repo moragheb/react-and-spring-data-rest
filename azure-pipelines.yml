@@ -57,7 +57,7 @@ steps:
   inputs:
     azureSubscriptionEndpoint: 'Visual Studio Enterprise (2a22bfca-1d56-46ef-9b7a-0a93d5552606)'
     azureContainerRegistry: ACRSpringbootimages.azurecr.io
-    dockerFile: src/Dockerfile
+    dockerFile: Dockerfile
     imageName: 'Web:$(Build.BuildNumber)'
     includeLatestTag: true
     useDefaultContext: false
