@@ -15,7 +15,6 @@ steps:
   inputs:
     deploymentScope: 'Resource Group'
     azureResourceManagerConnection: 'Arm-ServiceConnection'
-    subscriptionId: '2a22bfca-1d56-46ef-9b7a-0a93d5552606'
     action: 'Create Or Update Resource Group'
     resourceGroupName: $(varResoursegroupname)
     location: 'Central US'
