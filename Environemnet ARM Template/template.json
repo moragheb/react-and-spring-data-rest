@@ -51,7 +51,7 @@
             "location": "westus",
             "sku": {
                 "name": "GP_Gen5",
-                "tier": "Basic",
+                "tier": "B_Gen5_1",
                 "family": "Gen5",
                 "capacity": 2
             },
