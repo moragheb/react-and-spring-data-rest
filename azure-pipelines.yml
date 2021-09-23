@@ -1,77 +1,76 @@
 
 trigger:
 - master
-
-pool:
-  vmImage: 'ubuntu-latest'
-
 variables:
- -group : Pipeline_Variable_Group
- -name : VSTS_ARM_REST_IGNORE_SSL_ERRORS
- -value: true
- 
+    -group : Pipeline_Variable_Group
+    -name : VSTS_ARM_REST_IGNORE_SSL_ERRORS
+    -value: true
+
+stages:
+- stage: Build
+  pool:
+    vmImage: 'ubuntu-latest'
+  jobs:
+  - job: Build
+    steps:
+        - task: AzureResourceManagerTemplateDeployment@3
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: 'Arm-ServiceConnection'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: $(varResoursegroupname)
+            location: 'Central US'
+            templateLocation: 'URL of the file'
+            csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
+            deploymentMode: 'Incremental'
 
 
-steps:
+        - task: Maven@3
+          inputs:
+            mavenPomFile: 'pom.xml'
+            options: 'clean'
+            publishJUnitResults: true
+            testResultsFiles: '**/surefire-reports/TEST-*.xml'
+            codeCoverageToolOption: 'Cobertura'
+            javaHomeOption: 'JDKVersion'
+            jdkVersionOption: '1.8'
+            mavenVersionOption: 'Default'
+            mavenAuthenticateFeed: false
+            effectivePomSkip: false
+            sonarQubeRunAnalysis: false
+            codeCoverageSourceDirectories: src/main    
 
-- task: AzureResourceManagerTemplateDeployment@3
-  inputs:
-    deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Arm-ServiceConnection'
-    action: 'Create Or Update Resource Group'
-    resourceGroupName: $(varResoursegroupname)
-    location: 'Central US'
-    templateLocation: 'URL of the file'
-    csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
-    deploymentMode: 'Incremental'
-
-
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    options: 'clean'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    codeCoverageToolOption: 'Cobertura'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
-    codeCoverageSourceDirectories: src/main    
-
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-  inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)'
-    Contents: '**/*.jar'
-    TargetFolder: '$(build.artifactstagingdirectory)'
-  condition: succeededOrFailed()
-      
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: Package-build'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
-    ArtifactName: 'Package-build'
-  condition: succeededOrFailed()    
+        - task: CopyFiles@2
+          displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+          inputs:
+            SourceFolder: '$(system.defaultworkingdirectory)'
+            Contents: '**/*.jar'
+            TargetFolder: '$(build.artifactstagingdirectory)'
+          condition: succeededOrFailed()
+              
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: Package-build'
+          inputs:
+            PathtoPublish: '$(build.artifactstagingdirectory)'
+            ArtifactName: 'Package-build'
+          condition: succeededOrFailed()    
 
 
-- task: Docker@1
-  displayName: 'build an image'
-  inputs:
-    azureSubscriptionEndpoint: 'Arm-ServiceConnection'
-    azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
-    dockerFile: Dockerfile
-    imageName: 'SpringAppImage'
-    includeLatestTag: true
-    useDefaultContext: false
-    buildContext: .
+        - task: Docker@1
+          displayName: 'build an image'
+          inputs:
+            azureSubscriptionEndpoint: 'Arm-ServiceConnection'
+            azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
+            dockerFile: Dockerfile
+            imageName: 'SpringAppImage'
+            includeLatestTag: true
+            useDefaultContext: false
+            buildContext: .
 
-- task: Docker@1
-  displayName: 'Push Image'
-  inputs:
-    azureSubscriptionEndpoint: 'Arm-ServiceConnection'
-    azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
-    command: 'Push an image'
-    imageName: 'SpringAppImage'
+        - task: Docker@1
+          displayName: 'Push Image'
+          inputs:
+            azureSubscriptionEndpoint: 'Arm-ServiceConnection'
+            azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
+            command: 'Push an image'
+            imageName: 'SpringAppImage'
