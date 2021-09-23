@@ -14,7 +14,7 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Enterprise (2a22bfca-1d56-46ef-9b7a-0a93d5552606)'
+    azureResourceManagerConnection: 'Arm-ServiceConnection'
     subscriptionId: '2a22bfca-1d56-46ef-9b7a-0a93d5552606'
     action: 'Create Or Update Resource Group'
     resourceGroupName: $(varResoursegroupname)
@@ -58,7 +58,7 @@ steps:
 - task: Docker@1
   displayName: 'build an image'
   inputs:
-    azureSubscriptionEndpoint: 'Visual Studio Enterprise (2a22bfca-1d56-46ef-9b7a-0a93d5552606)'
+    azureSubscriptionEndpoint: 'Arm-ServiceConnection'
     azureContainerRegistry: ACRSpringbootimages.azurecr.io
     dockerFile: Dockerfile
     imageName: 'SpringAppImage'
@@ -69,7 +69,7 @@ steps:
 - task: Docker@1
   displayName: 'Push Image'
   inputs:
-    azureSubscriptionEndpoint: 'Visual Studio Enterprise (2a22bfca-1d56-46ef-9b7a-0a93d5552606)'
+    azureSubscriptionEndpoint: 'Arm-ServiceConnection'
     azureContainerRegistry: acrspringbootimages.azurecr.io
     command: 'Push an image'
     imageName: 'SpringAppImage'
