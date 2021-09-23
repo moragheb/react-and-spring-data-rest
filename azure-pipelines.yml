@@ -2,9 +2,14 @@
 trigger:
 - master
 variables:
-    -group : Pipeline_Variable_Group
-    -name : VSTS_ARM_REST_IGNORE_SSL_ERRORS
-    -value: true
+  VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
+  Registry_name:'acrspringimages'
+  app_service_plan:'springappasp'
+  varResoursegroupname:'multipipelinerg'
+  Webapp_Name:'releasepipelinespringapp'
+
+
+
 
 stages:
 - stage: Build
