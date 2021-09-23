@@ -85,3 +85,42 @@ stages:
             azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
             command: 'Push an image'
             imageName: 'SpringAppImage'
+- stage: DeployImagetostageapp
+  displayName: 'Deply image to stage web app'
+  dependsOn: 'Dockerbuild'
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: dockerpush
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Arm-ServiceConnection'
+        scriptType: 'ps'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          #create the web service plan
+          az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
+          
+          #set the auto Scale on the  app service plan
+          az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
+          az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage > 70 avg 10m" --scale out 3
+          az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage < 30  avg 10m" --scale in 1
+          
+          #create the Web App
+          az webapp create --resource-group $(varResoursegroupname) --plan $(app_service_plan) --name $(Webapp_Name) --deployment-container-image-name acr$(varResoursegroupname).azurecr.io/springappimage:latest
+          
+          #create the Deployment Slot
+          az webapp deployment slot create --name $(Webapp_Name) --resource-group $(varResoursegroupname) --slot staging
+          
+          #set the web app ruunning port
+          az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=80
+          #use the system manged identity to reach the image in the image registry
+          $SubscriptionID = az account show --query id --output tsv
+          $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -output tsv
+          az role assignment create --assignee $($principal_ID) --scope /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+          
+          az resource update --ids /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
+          
+          #pull the image and deploy it 
+          az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name acr$(varResoursegroupname).azurecr.io/springappimage:latest --docker-registry-server-url https://acr$(varResoursegroupname).azurecr.io
