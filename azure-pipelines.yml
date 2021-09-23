@@ -118,10 +118,10 @@ stages:
           az webapp deployment slot create --name $(Webapp_Name) --resource-group $(varResoursegroupname) --slot staging
           
           #set the web app ruunning port
-          az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=80
+          az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
           #use the system manged identity to reach the image in the image registry
-          $SubscriptionID = az account show --query id --output tsv
-          $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -output tsv
+          $SubscriptionID = az account show --query id  
+          $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId 
           az role assignment create --assignee $($principal_ID) --scope /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
           
           az resource update --ids /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
