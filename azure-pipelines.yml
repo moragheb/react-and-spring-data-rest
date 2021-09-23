@@ -58,7 +58,7 @@ steps:
   displayName: 'build an image'
   inputs:
     azureSubscriptionEndpoint: 'Arm-ServiceConnection'
-    azureContainerRegistry: ACRSpringbootimages.azurecr.io
+    azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
     dockerFile: Dockerfile
     imageName: 'SpringAppImage'
     includeLatestTag: true
@@ -69,6 +69,6 @@ steps:
   displayName: 'Push Image'
   inputs:
     azureSubscriptionEndpoint: 'Arm-ServiceConnection'
-    azureContainerRegistry: acrspringbootimages.azurecr.io
+    azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
     command: 'Push an image'
     imageName: 'SpringAppImage'
