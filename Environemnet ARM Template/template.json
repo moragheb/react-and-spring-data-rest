@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {},
     "variables": {
-        "ACRContainer": "[concat('acr', uniqueString(resourceGroup().name))]",
+        "ACRContainer": "[concat('acr', resourceGroup().name)]",
         "MYSQLServerName": "[concat(resourceGroup().name,'-SQLServer')]"
     },
     "resources": [
