@@ -7,6 +7,7 @@ pool:
 
 variables:
  -group : Pipeline_Variable_Group
+ 
 
 
 steps:
