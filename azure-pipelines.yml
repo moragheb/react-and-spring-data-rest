@@ -2,7 +2,7 @@
 trigger:
 - master
 variables:
-  VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
+  VSTS_ARM_REST_IGNORE_SSL_ERRORS: 'true'
   Registry_name:'acrspringimages'
   app_service_plan:'springappasp'
   varResoursegroupname:'multipipelinerg'
