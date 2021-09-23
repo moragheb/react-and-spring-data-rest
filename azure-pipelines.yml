@@ -3,7 +3,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'ubuntu-latest'
 
 variables:
  -group : Pipeline_Variable_Group
@@ -75,7 +75,6 @@ steps:
     azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
     command: 'Push an image'
     imageName: 'SpringAppImage'
-- task: AzureCLI@2
   inputs:
     azureSubscription: 'Arm-ServiceConnection'
     scriptType: 'pscore'
