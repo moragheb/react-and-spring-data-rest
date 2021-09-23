@@ -50,7 +50,7 @@
             "name": "[variables('MYSQLServerName')]",
             "location": "westus",
             "sku": {
-                "name": "GP_Gen5_2",
+                "name": "GP_Gen5",
                 "tier": "Basic",
                 "family": "Gen5",
                 "capacity": 2
