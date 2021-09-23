@@ -5,7 +5,8 @@ variables:
   Registry_name: 'acrspringimages'
   app_service_plan: 'springappasp'
   varResoursegroupname: 'multipipelinerg'
-  Webapp_Name: 'testdeploymenttilkstageapp'
+  Webapp_Name: 'raghebtestdeploymentwithAKS'
+  AKSClustername: 'RaghebAKSSpringCluster'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
 
 
@@ -89,13 +90,13 @@ stages:
             azureContainerRegistry: acr$(varResoursegroupname).azurecr.io
             command: 'Push an image'
             imageName: 'SpringAppImage'
-- stage: DeployImagetostageapp
-  displayName: 'Deply image to stage web app'
+- stage: Stagingwebapp
+  displayName: 'Deploy image to stage web app'
   dependsOn: 'Dockerbuild'
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: dockerpush
+  - job: 'Create-app'
     steps:
     - task: AzureCLI@2
       inputs:
@@ -119,12 +120,31 @@ stages:
           
           #set the web app ruunning port
           az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
+
           #use the system manged identity to reach the image in the image registry
           $SubscriptionID = az account show --query id  
+          echo $(SubscriptionID)
           $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId 
-          az role assignment create --assignee $($principal_ID) --scope /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+          echo $(principal_ID)         
+          az role assignment create --assignee $(principal_ID) --scope /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
           
           az resource update --ids /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
           
           #pull the image and deploy it 
           az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name acr$(varResoursegroupname).azurecr.io/springappimage:latest --docker-registry-server-url https://acr$(varResoursegroupname).azurecr.io
+- stage: productionwithAKS
+  displayName: 'Deploy image to production POD in AKS with SQL DB'
+  dependsOn: 'Stagingwebapp'
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: 'deploytoAKS'
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Arm-ServiceConnection'
+        scriptType: 'ps'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername)--node-count 1 --enable-addons monitoring --generate-ssh-keys'
+    
+    
