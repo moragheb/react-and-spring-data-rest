@@ -6,7 +6,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
- -group : 'Pipeline_Variable_Group'
+ -group : Pipeline_Variable_Group
 
 
 steps:
