@@ -3,9 +3,9 @@ trigger:
 - master
 variables:
   Registry_name: 'acrspringimages'
-  app_service_plan: 'raghebaksdep-plan'
-  varResoursegroupname: 'raghebdep-rg'
-  Webapp_Name: 'raghebaksdepAKS'
+  app_service_plan: 'raghebaksdepplan'
+  varResoursegroupname: 'raghebdeprg'
+  Webapp_Name: 'raghebaksdepwebapp'
   AKSClustername: 'raghebaksdepcluster'
   mysqldb: 'production_mysqld_ragheb'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
