@@ -9,6 +9,7 @@ variables:
   AKSClustername: 'friraghebakscluster'
   mysqldb: 'emplyee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
+  arm_outoput: ''
 
 
 
@@ -30,6 +31,7 @@ stages:
             templateLocation: 'URL of the file'
             csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
             deploymentMode: 'Incremental'
+            deploymentOutputs: arm_outoput
 - stage: Compile
   displayName: 'maven build the app and test the code base using jacoco'
   dependsOn: []
