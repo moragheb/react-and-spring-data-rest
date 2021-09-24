@@ -97,7 +97,7 @@ stages:
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: 'Create-app'
+  - job: 'Createapp'
     steps:
     - task: AzureCLI@2
       inputs:
