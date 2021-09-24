@@ -3,11 +3,11 @@ trigger:
 - master
 variables:
   Registry_name: 'acrspringimages'
-  app_service_plan: 'lastcallraghebplan'
-  varResoursegroupname: 'lastcallraghebrg'
-  Webapp_Name: 'lastcallraghebwebapp'
-  AKSClustername: 'lastcallakscluster'
-  mysqldb: 'production_mysqld_ragheb'
+  app_service_plan: 'FRIRaghebASP'
+  varResoursegroupname: 'friraghebrg'
+  Webapp_Name: 'friraghebwebapp'
+  AKSClustername: 'friraghebakscluster'
+  mysqldb: 'emplyee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
 
 
@@ -124,11 +124,11 @@ stages:
           az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
 
           #use the system manged identity to reach the image in the image registry
-          $SubscriptionID = az account show --query id  
-          $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId 
-          az role assignment create --assignee $(principal_ID) --scope /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
-          
-          az resource update --ids /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
+          $SubscriptionID = az account show --query id -o tsv
+          $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
+          az role assignment create --assignee $principal_ID --scope /subscriptions/$SubscriptionID/resourceGroups/$varResoursegroupname/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+          az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$varResoursegroupname/providers/Microsoft.Web/sites/$Webapp_Name/config/web --set properties.acrUseManagedIdentityCreds=True
+
           
           #pull the image and deploy it 
           az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name acr$(varResoursegroupname).azurecr.io/springappimage:latest --docker-registry-server-url https://acr$(varResoursegroupname).azurecr.io
