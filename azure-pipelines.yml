@@ -147,7 +147,7 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
          #create an AKS Cluster 
-         az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername)--node-count 1 --enable-addons monitoring --generate-ssh-keys
+         az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
          az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr acr$(varResoursegroupname)
          #create an Empty DB
          az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(varResoursegroupname)-SQLServe
