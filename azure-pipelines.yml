@@ -69,8 +69,8 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: 'public the Kubernettes manifest file'
           inputs:
-            PathtoPublish: '$(Build.ArtifactSourcesDirectory)/app/Kubernetes'
-            ArtifactName: 'drop'
+            PathtoPublish: '$(Build.ArtifactSourcesDirectory)\app\Kubernetes'
+            ArtifactName: 'manifests'
           condition: succeededOrFailed()   
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Artifact: Package-build'
