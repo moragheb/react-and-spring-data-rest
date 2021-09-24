@@ -142,7 +142,7 @@ stages:
 
           
           #pull the image and deploy it 
-          az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name $(acrspringimages).azurecr.io/springappimage:latest --docker-registry-server-url https://$(acrspringimages).azurecr.io
+          az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name $(acr_container_name).azurecr.io/springappimage:latest --docker-registry-server-url https://$(acr_container_name).azurecr.io
 - stage: productionwithAKS
   displayName: 'Deploy image to production POD in AKS with SQL DB'
   dependsOn: 'Stagingwebapp'
