@@ -1,20 +1,8 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "ACRContainer": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a globally unique contianer namer"
-            }
-        },
-        "MYSQLServerName": {
-            "type": "string"
-        }
-        }
-    }
     "variables": {
-        "ACRContainer": "[concat('acr', resourceGroup().name)]",
+        "ACRContainer": "[concat('ACR','Springbootimages')]",
         "MYSQLServerName": "[concat(resourceGroup().name,'-SQLServer')]"
     },
     "resources": [
@@ -61,10 +49,10 @@
             "name": "[parameters('MYSQLServerName')]",
             "location": "westus",
             "sku": {
-                "name": "B_Gen5_1",
-                "tier": "Basic",
+                "name": "GP_Gen5_2",
+                "tier": "GeneralPurpose",
                 "family": "Gen5",
-                "capacity": 1
+                "capacity": 2
             },
             "properties": {
                 "storageProfile": {
@@ -86,7 +74,7 @@
         {
             "type": "Microsoft.DBforMySQL/servers/databases",
             "apiVersion": "2017-12-01",
-            "name": "[concat(patrameters('MYSQLServerName'), '/springdatawithreact-db')]",
+            "name": "[concat(parameters('MYSQLServerName'), '/springdatawithreact-db')]",
             "dependsOn": [
                 "[resourceId('Microsoft.DBforMySQL/servers', parameters('MYSQLServerName'))]"
             ],
