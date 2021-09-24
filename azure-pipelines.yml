@@ -2,11 +2,11 @@
 trigger:
 - master
 variables:
-  acr_container_name: 'acrspringimages'
-  app_service_plan: 'aspraghebspringbootapp'
-  varResoursegroupname: 'raghebspringbootapprg'
-  mysqlsever_name: 'raghebspringbootappmysqlserver'
-  Webapp_Name: 'raghebspringbootwebapp'
+  acr_container_name: 'acrragheb'
+  app_service_plan: 'aspraghebsapp'
+  varResoursegroupname: 'raghebdeprg'
+  mysqlsever_name: 'raghebmysqlserver'
+  Webapp_Name: 'raghebcicdwebapp'
   AKSClustername: 'raghebspringbootakscluster'
   mysqldb: 'employee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
