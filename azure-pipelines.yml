@@ -7,6 +7,7 @@ variables:
   varResoursegroupname: 'multipipelinerg'
   Webapp_Name: 'raghebtestdeploymentwithAKS'
   AKSClustername: 'RaghebAKSSpringCluster'
+  mysqldb: 'production_mysqld-ragheb'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
 
 
@@ -146,5 +147,8 @@ stages:
         scriptType: 'ps'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername)--node-count 1 --enable-addons monitoring --generate-ssh-keys
-          az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr acr$(varResoursegroupname)
+         #create an AKS Cluster 
+         az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername)--node-count 1 --enable-addons monitoring --generate-ssh-keys
+         az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr acr$(varResoursegroupname)
+         #create an Empty DB
+         az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(varResoursegroupname)-SQLServe
