@@ -3,10 +3,10 @@ trigger:
 - master
 variables:
   Registry_name: 'acrspringimages'
-  app_service_plan: 'thursdayAKSdep-plan'
-  varResoursegroupname: 'raghebthurg'
-  Webapp_Name: 'raghebthuwebapp'
-  AKSClustername: 'raghebthuakscluster'
+  app_service_plan: 'lastcallraghebplan'
+  varResoursegroupname: 'lastcallraghebrg'
+  Webapp_Name: 'lastcallraghebwebapp'
+  AKSClustername: 'lastcallakscluster'
   mysqldb: 'production_mysqld_ragheb'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
 
@@ -150,4 +150,4 @@ stages:
          az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
          az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr acr$(varResoursegroupname)
          #create an Empty DB
-         az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(varResoursegroupname)-SQLServe
+         az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(varResoursegroupname)-SQLServer
