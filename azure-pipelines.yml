@@ -36,7 +36,7 @@ stages:
             overrideParameters: '-ACRContainer $(acr_container_name) -MYSQLServerName $(mysqlsever_name)'
             deploymentOutputs: arm_outoput
 - stage: Compile
-  displayName: 'maven build the app and test the code base using jacoco'
+  displayName: 'build the code base and code coverage-docker and K8s files'
   dependsOn: []
   pool:
     vmImage: 'ubuntu-latest'
@@ -69,7 +69,7 @@ stages:
         - task: PublishBuildArtifacts@1
           displayName: 'public the Kubernettes manifest file'
           inputs:
-            PathtoPublish: '$(Build.ArtifactSourcesDirectory)/Kubernetes'
+            PathtoPublish: '$(Pipeline.Workspace)/s/Kubernetes'
             ArtifactName: 'manifests'
           condition: succeededOrFailed()   
         - task: PublishBuildArtifacts@1
