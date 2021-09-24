@@ -1,7 +1,18 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "ACRContainer": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a globally unique contianer namer"
+            }
+        },
+        "MYSQLServerName": {
+            "type": "string"
+        }
+        }
+    }
     "variables": {
         "ACRContainer": "[concat('acr', resourceGroup().name)]",
         "MYSQLServerName": "[concat(resourceGroup().name,'-SQLServer')]"
@@ -10,7 +21,7 @@
         {
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2021-06-01-preview",
-            "name": "[variables('ACRContainer')]",
+            "name": "[parameters('ACRContainer')]",
             "location": "westus",
             "sku": {
                 "name": "Standard",
@@ -47,7 +58,7 @@
         {
             "type": "Microsoft.DBforMySQL/servers",
             "apiVersion": "2017-12-01",
-            "name": "[variables('MYSQLServerName')]",
+            "name": "[parameters('MYSQLServerName')]",
             "location": "westus",
             "sku": {
                 "name": "B_Gen5_1",
@@ -75,9 +86,9 @@
         {
             "type": "Microsoft.DBforMySQL/servers/databases",
             "apiVersion": "2017-12-01",
-            "name": "[concat(variables('MYSQLServerName'), '/springdatawithreact-db')]",
+            "name": "[concat(patrameters('MYSQLServerName'), '/springdatawithreact-db')]",
             "dependsOn": [
-                "[resourceId('Microsoft.DBforMySQL/servers', variables('MYSQLServerName'))]"
+                "[resourceId('Microsoft.DBforMySQL/servers', parameters('MYSQLServerName'))]"
             ],
             "properties": {
                 "charset": "latin1",
@@ -87,9 +98,9 @@
         {
             "type": "Microsoft.DBforMySQL/servers/firewallRules",
             "apiVersion": "2017-12-01",
-            "name": "[concat(variables('MYSQLServerName'), '/AllowAllAzureIps')]",
+            "name": "[concat(parameters('MYSQLServerName'), '/AllowAllAzureIps')]",
             "dependsOn": [
-                "[resourceId('Microsoft.DBforMySQL/servers', variables('MYSQLServerName'))]"
+                "[resourceId('Microsoft.DBforMySQL/servers', parameters('MYSQLServerName'))]"
             ],
             "properties": {
                 "startIpAddress": "0.0.0.0",
