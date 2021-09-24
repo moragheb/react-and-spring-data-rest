@@ -124,9 +124,9 @@ stages:
           az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
 
           #use the system manged identity to reach the image in the image registry
-          SubscriptionID = az account show --query id  
+          $SubscriptionID = az account show --query id  
           echo $(SubscriptionID)
-          principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId 
+          $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId 
           echo $(principal_ID)         
           az role assignment create --assignee $(principal_ID) --scope /subscriptions/$(SubscriptionID)/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
           
