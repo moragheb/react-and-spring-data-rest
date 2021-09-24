@@ -2,17 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "web_App_Name": {
+        "ACRContainer": {
             "value": "testtheARM-app"
         },
-        "web App Service Plan": {
+        "MYSQLServerName": {
             "value": "ASP-testthearm"
-        },
-        "container_name": {
-            "value": "testthearmContainer"
-        },
-        "mysqlserver-name": {
-            "value": "testthearm-sqlserver"
         }
     }
 }
