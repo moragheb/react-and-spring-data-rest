@@ -2,12 +2,13 @@
 trigger:
 - master
 variables:
-  Registry_name: 'acrspringimages'
-  app_service_plan: 'FRIRaghebASP'
-  varResoursegroupname: 'friraghebrg'
-  Webapp_Name: 'friraghebwebapp'
-  AKSClustername: 'friraghebakscluster'
-  mysqldb: 'emplyee_prod'
+  acr_container_name: 'acrspringimages'
+  app_service_plan: 'aspraghebspringbootapp'
+  varResoursegroupname: 'raghebspringbootapprg'
+  mysqlsever_name: 'raghebspringbootappmysqlserver'
+  Webapp_Name: 'raghebspringbootwebapp'
+  AKSClustername: 'raghebspringbootakscluster'
+  mysqldb: 'employee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
   arm_outoput: ''
 
@@ -31,6 +32,8 @@ stages:
             templateLocation: 'URL of the file'
             csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
             deploymentMode: 'Incremental'
+            csmParametersFile: https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
+            overrideParameters: '-ACRContainer $(acr_container_name) -MYSQLServerName $(mysqlsever_name)'
             deploymentOutputs: arm_outoput
 - stage: Compile
   displayName: 'maven build the app and test the code base using jacoco'
