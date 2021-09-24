@@ -32,6 +32,7 @@ stages:
             deploymentMode: 'Incremental'
 - stage: Compile
   displayName: 'maven build the app and test the code base using jacoco'
+  dependsOn: []
   pool:
     vmImage: 'ubuntu-latest'
   jobs:
