@@ -165,8 +165,6 @@ stages:
 - stage: createproductionencironemnt
   displayName: 'create production AKS CLuster and grant it access to the registry'
   dependsOn: 'Stagingwebapp'
-  pool:
-    vmImage: 'windows-latest'
   jobs:
   - deployment: 'buildtheAKSCluster'
     displayName: 'deploy the Kubenetes Cluster and prod db'
@@ -194,18 +192,26 @@ stages:
   pool:
     vmImage: 'ubuntu-latest'
   jobs:
-  - job: 'deploytoAKS'
-    steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'manifests'
-        targetPath: '$(Pipeline.Workspace)/manifests'
-    - task: KubernetesManifest@0
-      inputs:
-        action: 'deploy'
-        kubernetesServiceConnection: 'AKSClusterConnection'
-        namespace: 'default'
-        manifests: |
-          $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
-          $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
+  - deployment: 'deployapptoAKS'
+    displayName: 'deploy the AKS Cluster'
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'prod'
+    strategy:
+      runOnce:
+        deploy:
+         steps: 
+           - checkout: self
+           - task  : "KubernetesManifest@0"
+             displayName: Deploy to Kubernetes cluster
+             inputs:
+              action: deploy
+              namespace: "default"
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/deployment.yml
+                $(System.ArtifactsDirectory)/manifests/service.yml
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(acr_container_nam)/"SpringAppImage:latest"           
+                  
