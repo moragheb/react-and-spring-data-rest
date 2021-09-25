@@ -45,9 +45,9 @@ stages:
                 templateLocation: 'URL of the file'
                 csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
                 deploymentMode: 'Incremental'
-                        
-
-
+                csmParametersFile: https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
+                overrideParameters: '-ACRContainer $(acr_container_name) -MYSQLServerName $(mysqlsever_name)'
+                deploymentOutputs: arm_outoput
 - stage: Compile
   displayName: 'build the code base and code coverage-docker and K8s files'
   dependsOn: []
@@ -119,62 +119,75 @@ stages:
 - stage: Stagingwebapp
   displayName: 'Deploy image to stage web app'
   dependsOn: 'Dockerbuild'
-  pool:
-    vmImage: 'windows-latest'
   jobs:
-  - job: 'Createapp'
-    steps:
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'Arm-ServiceConnection'
-        scriptType: 'ps'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          #create the web service plan
-          az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
-          
-          #set the auto Scale on the  app service plan
-          az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
-          az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage > 70 avg 10m" --scale out 3
-          az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage < 30  avg 10m" --scale in 1
-          
-          #create the Web App
-          az webapp create --resource-group $(varResoursegroupname) --plan $(app_service_plan) --name $(Webapp_Name) --deployment-container-image-name $(acr_container_name).azurecr.io/springappimage:latest
-          
-          #create the Deployment Slot
-          az webapp deployment slot create --name $(Webapp_Name) --resource-group $(varResoursegroupname) --slot staging
-          
-          #set the web app ruunning port
-          az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
+  - deployment: 'buildstagewebapp'
+    displayName: 'deploy the stage web app'
+    pool:
+      vmImage: 'windows-latest'
+    environment: 'stage'
+    strategy:
+      runOnce:
+        deploy:
+         steps: 
+           - checkout: self
+           -   task: AzureCLI@2
+               inputs:
+                azureSubscription: 'Arm-ServiceConnection'
+                scriptType: 'ps'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  #create the web service plan
+                  az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
+                  
+                  #set the auto Scale on the  app service plan
+                  az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
+                  az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage > 70 avg 10m" --scale out 3
+                  az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage < 30  avg 10m" --scale in 1
+                  
+                  #create the Web App
+                  az webapp create --resource-group $(varResoursegroupname) --plan $(app_service_plan) --name $(Webapp_Name) --deployment-container-image-name $(acr_container_name).azurecr.io/springappimage:latest
+                  
+                  #create the Deployment Slot
+                  az webapp deployment slot create --name $(Webapp_Name) --resource-group $(varResoursegroupname) --slot staging
+                  
+                  #set the web app ruunning port
+                  az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
 
-          #use the system manged identity to reach the image in the image registry
-          #$SubscriptionID = az account show --query id -o tsv
-          #$principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
-          #az role assignment create --assignee $principal_ID --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
-          #az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
+                  #use the system manged identity to reach the image in the image registry
+                  #$SubscriptionID = az account show --query id -o tsv
+                  #$principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
+                  #az role assignment create --assignee $principal_ID --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+                  #az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
 
-          
-          #pull the image and deploy it 
-          az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name $(acr_container_name).azurecr.io/springappimage:latest --docker-registry-server-url https://$(acr_container_name).azurecr.io
+                  
+                  #pull the image and deploy it 
+                  az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name $(acr_container_name).azurecr.io/springappimage:latest --docker-registry-server-url https://$(acr_container_name).azurecr.io
 - stage: createproductionencironemnt
   displayName: 'create production AKS CLuster and grant it access to the registry'
   dependsOn: 'Stagingwebapp'
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: 'deploytoAKS'
-    steps:
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'Arm-ServiceConnection'
-        scriptType: 'ps'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-         #create an AKS Cluster 
-         az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
-         az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr $(acr_container_name)
-         #create an Empty DB
-         az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(mysqlsever_name)
+  - deployment: 'buildtheAKSCluster'
+    displayName: 'deploy the Kubenetes Cluster and prod db'
+    pool:
+      vmImage: 'windows-latest'
+    environment: 'prod'
+    strategy:
+      runOnce:
+        deploy:
+         steps: 
+           - checkout: self
+           -   task: "AzureCLI@2"
+               inputs:
+                  azureSubscription: 'Arm-ServiceConnection'
+                  scriptType: 'ps'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                      #create an AKS Cluster 
+                      az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
+                      az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr $(acr_container_name)
+                      az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(mysqlsever_name)
 - stage: deployimagetoAKSanddacpactosql
   displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
   dependsOn: 'createproductionencironemnt'
