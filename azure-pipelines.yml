@@ -2,12 +2,19 @@
 trigger:
 - master
 variables:
+  #Azure containter Registry name 
   acr_container_name: 'acrraghebimages'
+  #Azure App service Plan for staging name
   app_service_plan: 'aspraghebplan'
+  #Azure Resource group name
   varResoursegroupname: 'raghebdeprg'
+  #Azyre mysql server name
   mysqlsever_name: 'raghebemptymysqlserver'
+  #azure web app name for staging environemnt
   Webapp_Name: 'raghebspringwebapp'
+  #azure Kubernets Cluster name
   AKSClustername: 'raghebspringbootakscluster'
+  #my sql database name
   mysqldb: 'employee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
   arm_outoput: ''
@@ -17,24 +24,30 @@ variables:
 stages:
 - stage: Build
   displayName: 'build the IOC image registry and empty SQL'
-  pool:
-    vmImage: 'ubuntu-latest'
   jobs:
-  - job: BuildIOC
-    steps:
-        - task: AzureResourceManagerTemplateDeployment@3
-          inputs:
-            deploymentScope: 'Resource Group'
-            azureResourceManagerConnection: 'Arm-ServiceConnection'
-            action: 'Create Or Update Resource Group'
-            resourceGroupName: $(varResoursegroupname)
-            location: 'Central US'
-            templateLocation: 'URL of the file'
-            csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
-            deploymentMode: 'Incremental'
-            csmParametersFile: https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
-            overrideParameters: '-ACRContainer $(acr_container_name) -MYSQLServerName $(mysqlsever_name)'
-            deploymentOutputs: arm_outoput
+  - deployment: buildIOC
+    displayName: deploy the infrastructure
+    pool:
+      vmImage: 'Ubuntu-latest'
+    # creates an environment if it doesn't exist
+    environment: 'dev'
+    strategy:
+      runOnce:
+        deploy:
+         steps: 
+           - checkout: self
+           -   task: "AzureResourceGroupDeployment@2"
+               inputs:
+                azureSubscription: "Arm-ServiceConnection"
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: $(varResoursegroupname)
+                location: 'Central US'
+                templateLocation: 'URL of the file'
+                csmFileLink: 'https://raw.githubusercontent.com/moragheb/react-and-spring-data-rest/master/Environemnet%20ARM%20Template/template.json'
+                deploymentMode: 'Incremental'
+                        
+
+
 - stage: Compile
   displayName: 'build the code base and code coverage-docker and K8s files'
   dependsOn: []
