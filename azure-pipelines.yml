@@ -196,11 +196,11 @@ stages:
                       az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(mysqlsever_name)
                       #create SPN to access the ACR
                       $ACR_REGISTRY_ID=$(az acr show --name $acr_container_name --query id --output tsv)                      
-                      $az role assignment create --assignee $(env.servicePrincipalId) --scope $ACR_REGISTRY_ID --role acrpull
+                      $az role assignment create --assignee $servicePrincipalId --scope $ACR_REGISTRY_ID --role acrpull
                       kubectl create secret docker-registry $Imagepullsecret \
                       --namespace default \
                       --docker-server=$(acr_container_name).azurecr.io \
-                      --docker-username=$$servicePrincipalId \
+                      --docker-username=$servicePrincipalId \
                       --docker-password=$servicePrincipalKey                     
 - stage: deployimagetoAKSanddacpactosql
   displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
