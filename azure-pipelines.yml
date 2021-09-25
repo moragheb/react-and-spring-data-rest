@@ -224,6 +224,7 @@ stages:
              displayName: "Create an image pull secret"
              inputs:
                action:  "createSecret"
+               kubernetesServiceConnection: $(AKS_ServiceConn)
                namespace: "default"
                secretName: '$ACRSecret'
                secretType: 'dockerRegistry'
