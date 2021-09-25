@@ -143,8 +143,7 @@ stages:
                 addSpnToEnvironment: true
                 scriptType: ps
                 scriptLocation: 'inlineScript'
-                inlineScript: 
-                name: |
+                inlineScript: |
                   #create the web service plan
                   export ARM_CLIENT_ID=$servicePrincipalId
                   az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
