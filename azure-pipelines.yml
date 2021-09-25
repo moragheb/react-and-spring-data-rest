@@ -14,6 +14,8 @@ variables:
   Webapp_Name: 'raghebspringwebapp'
   #azure Kubernets Cluster name
   AKSClustername: 'raghebspringbootakscluster'
+  #cluster ACR secret
+  Imagepullsecret:'tobesetlater'
   #my sql database name
   mysqldb: 'employee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
@@ -136,6 +138,7 @@ stages:
            -   task: AzureCLI@2
                inputs:
                 azureSubscription: 'Arm-ServiceConnection'
+                addSpnToEnvironment: true
                 scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
@@ -158,8 +161,8 @@ stages:
 
                   #use the system manged identity to reach the image in the image registry
                   $SubscriptionID = az account show --query id -o tsv
-                  $principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
-                  az role assignment create --assignee $principal_ID --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+                  #$principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
+                  az role assignment create --assignee $(env.servicePrincipalId) --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
                   az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
 
                   
@@ -183,12 +186,22 @@ stages:
                inputs:
                   azureSubscription: 'Arm-ServiceConnection'
                   scriptType: 'ps'
+                  addSpnToEnvironment: true
                   scriptLocation: 'inlineScript'
                   inlineScript: |
                       #create an AKS Cluster 
                       az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
                       az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr $(acr_container_name)
+                      #create the SQL DB
                       az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(mysqlsever_name)
+                      #create SPN to access the ACR
+                      $ACR_REGISTRY_ID=$(az acr show --name $acr_container_name --query id --output tsv)                      
+                      $az role assignment create --assignee $(env.servicePrincipalId) --scope $ACR_REGISTRY_ID --role acrpull
+                      kubectl create secret docker-registry $Imagepullsecret \
+                      --namespace default \
+                      --docker-server=$(acr_container_name).azurecr.io \
+                      --docker-username=$(env:servicePrincipalId) \
+                      --docker-password=$(env:servicePrincipalKey)                     
 - stage: deployimagetoAKSanddacpactosql
   displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
   dependsOn: 'createproductionencironemnt'
@@ -205,15 +218,20 @@ stages:
         deploy:
          steps: 
            - checkout: self
+
+
            - task  : "KubernetesManifest@0"
              displayName: Deploy to Kubernetes cluster
              inputs:
               action: deploy
               namespace: "default"
-              kubernetesServiceConnection: "AKSClusterConnection"
+              imagePullSecrets:
+              - name: $Imagepullsecret
+              kubernetesServiceConnection: "AKSClusterConnection"  
               manifests: |
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
               containers: |
-                $(acr_container_name)/"SpringAppImage:latest"           
+                $(acr_container_name)/"SpringAppImage:latest" 
+                        
                   
