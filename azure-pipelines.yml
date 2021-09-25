@@ -2,11 +2,11 @@
 trigger:
 - master
 variables:
-  acr_container_name: 'acrragheb'
-  app_service_plan: 'aspraghebsapp'
+  acr_container_name: 'acrraghebimages'
+  app_service_plan: 'aspraghebplan'
   varResoursegroupname: 'raghebdeprg'
-  mysqlsever_name: 'raghebmysqlserver'
-  Webapp_Name: 'raghebcicdwebapp'
+  mysqlsever_name: 'raghebemptymysqlserver'
+  Webapp_Name: 'raghebspringwebapp'
   AKSClustername: 'raghebspringbootakscluster'
   mysqldb: 'employee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
@@ -143,8 +143,8 @@ stages:
           
           #pull the image and deploy it 
           az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name $(acr_container_name).azurecr.io/springappimage:latest --docker-registry-server-url https://$(acr_container_name).azurecr.io
-- stage: productionwithAKS
-  displayName: 'Deploy image to production POD in AKS with SQL DB'
+- stage: createproductionencironemnt
+  displayName: 'create production AKS CLuster and grant it access to the registry'
   dependsOn: 'Stagingwebapp'
   pool:
     vmImage: 'windows-latest'
@@ -159,6 +159,27 @@ stages:
         inlineScript: |
          #create an AKS Cluster 
          az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
-         az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr acr$(varResoursegroupname)
+         az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr $(acr_container_name)
          #create an Empty DB
          az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(mysqlsever_name)
+- stage: deployimagetoAKSanddacpactosql
+  displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
+  dependsOn: 'createproductionencironemnt'
+  pool:
+    vmImage: 'ubuntu-latest'
+  jobs:
+  - job: 'deploytoAKS'
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'manifests'
+        targetPath: '$(Pipeline.Workspace)/manifests'
+    - task: KubernetesManifest@0
+      inputs:
+        action: 'deploy'
+        kubernetesServiceConnection: 'AKSClusterConnection'
+        namespace: 'default'
+        manifests: |
+          $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
+          $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
