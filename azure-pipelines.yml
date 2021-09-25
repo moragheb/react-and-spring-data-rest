@@ -3,17 +3,17 @@ trigger:
 - master
 variables:
   #Azure containter Registry name 
-  acr_container_name: 'acrraghebimages'
+  acr_container_name: 'acrraghebspringimages'
   #Azure App service Plan for staging name
-  app_service_plan: 'aspraghebplan'
+  app_service_plan: 'aspraghebspringplan'
   #Azure Resource group name
-  varResoursegroupname: 'raghebdeprg'
+  varResoursegroupname: 'raghebspringrg'
   #Azyre mysql server name
-  mysqlsever_name: 'raghebemptymysqlserver'
+  mysqlsever_name: 'raghebspringsqlserver'
   #azure web app name for staging environemnt
-  Webapp_Name: 'raghebspringwebapp'
+  Webapp_Name: 'raghebspringbootreactapp'
   #azure Kubernets Cluster name
-  AKSClustername: 'raghebspringbootakscluster'
+  AKSClustername: 'raghebspringakscluster'
   #Service Connections name
   AZ_ServiceConn: 'Arm-ServiceConnection'
   AKS_ServiceConn: 'AKSClusterConnection'  
