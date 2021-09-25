@@ -137,11 +137,10 @@ stages:
         deploy:
          steps: 
            - checkout: self
-           -   task: AzureCLI@2
+           -   task: AzureCLI@1
                inputs:
                 azureSubscription: 'Arm-ServiceConnection'
                 addSpnToEnvironment: true
-                scriptType: 'ps'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   #create the web service plan
