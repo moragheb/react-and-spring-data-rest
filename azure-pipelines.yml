@@ -225,6 +225,9 @@ stages:
              inputs:
               action: deploy
               namespace: "default"
+              imagePullSecrets: 
+              secretName: $(ImagePullSecret)
+              name: $(ImagePullSecret)
               kubernetesServiceConnection: "AKSClusterConnection"  
               manifests: |
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
