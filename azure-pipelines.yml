@@ -93,9 +93,9 @@ stages:
           condition: succeededOrFailed()    
 - stage: Dockerbuild
   displayName: 'build the docker image and push to  Azure Container registry'
-  dependsOn: |
-  -'Build'
-  -'Compile'
+  dependsOn: 
+  - 'Build'
+  - 'Compile'
   pool:
     vmImage: 'ubuntu-latest'
   jobs:
