@@ -145,7 +145,7 @@ stages:
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   #create the web service plan
-                  export ARM_CLIENT_ID=$servicePrincipalId
+                  $ARM_CLIENT_ID=$servicePrincipalId
                   az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
                   #set the auto Scale on the  app service plan
                   az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
