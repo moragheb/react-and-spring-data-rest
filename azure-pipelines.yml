@@ -137,13 +137,16 @@ stages:
         deploy:
          steps: 
            - checkout: self
-           -   task: AzureCLI@1
+           -   task: AzureCLI@2
                inputs:
                 azureSubscription: 'Arm-ServiceConnection'
                 addSpnToEnvironment: true
+                scriptType: ps
                 scriptLocation: 'inlineScript'
-                inlineScript: |
+                inlineScript: 
+                name: |
                   #create the web service plan
+                  export ARM_CLIENT_ID=$servicePrincipalId
                   az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
                   #set the auto Scale on the  app service plan
                   az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
@@ -162,7 +165,7 @@ stages:
                   #use the system manged identity to reach the image in the image registry
                   $SubscriptionID = az account show --query id -o tsv
                   #$principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
-                  az role assignment create --assignee $(env.servicePrincipalId) --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+                  az role assignment create --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
                   az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
 
                   
@@ -185,13 +188,11 @@ stages:
            -   task: "AzureCLI@2"
                inputs:
                   azureSubscription: $(AZ_ServiceConn)
-                  scriptType: 'ps'
+                  scriptType: ps
                   addSpnToEnvironment: true
                   scriptLocation: 'inlineScript'
                   inlineScript: |
                       #create an AKS Cluster 
-                      Write-Host "##vso[task.setvariable variable=SpId;]$env:servicePrincipalId"
-                      Write-Host "##vso[task.setvariable variable=SpKey;]$env:servicePrincipalKey"
                       az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
                       az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr $(acr_container_name)
                       #create the SQL DB
