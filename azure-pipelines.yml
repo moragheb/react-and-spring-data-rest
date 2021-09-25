@@ -210,11 +210,10 @@ stages:
              inputs:
               action: deploy
               namespace: "default"
+              kubernetesServiceConnection: "AKSClusterConnection"
               manifests: |
                 $(System.ArtifactsDirectory)/manifests/deployment.yml
                 $(System.ArtifactsDirectory)/manifests/service.yml
-              imagePullSecrets: |
-                $(imagePullSecret)
               containers: |
                 $(acr_container_nam)/"SpringAppImage:latest"           
                   
