@@ -1,4 +1,4 @@
-# **this is the deployment guide for the Spring data with Rract tutorial rest api and front end**
+# **this is the deployment guide for the spring data with react tutorial rest api and front end**
 
 the below Repo contains the following:
 
