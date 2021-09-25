@@ -202,8 +202,8 @@ stages:
                       kubectl create secret docker-registry $Imagepullsecret \
                       --namespace default \
                       --docker-server=$(acr_container_name).azurecr.io \
-                      --docker-username=$ARM_CLIENT_ID \
-                      --docker-password=$ARM_CLIENT_Key                     
+                      --docker-username="$ARM_CLIENT_ID" \
+                      --docker-password="$ARM_CLIENT_Key"                     
 - stage: deployimagetoAKSanddacpactosql
   displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
   dependsOn: 'createproductionencironemnt'
