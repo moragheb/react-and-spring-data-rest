@@ -225,7 +225,7 @@ stages:
                action:  "createSecret"
                kubernetesServiceConnection: $(AKS_ServiceConn)
                namespace: "default"
-               secretName: $(ImagePullSecret)
+               secretName: $ImagePullSecret
                secretType: 'dockerRegistry'
                dockerRegistryEndpoint: $(ACR_ServiceConn)  
            - task  : "KubernetesManifest@0"
@@ -233,9 +233,6 @@ stages:
              inputs:
               action: deploy
               namespace: "default"
-              imagePullSecrets: 
-              secretName: $(ImagePullSecret)
-              name: $(ImagePullSecret)
               kubernetesServiceConnection: $(AKS_ServiceConn)
               manifests: |
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
