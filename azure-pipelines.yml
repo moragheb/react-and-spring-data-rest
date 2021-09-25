@@ -15,7 +15,7 @@ variables:
   #azure Kubernets Cluster name
   AKSClustername: 'raghebspringbootakscluster'
   #cluster ACR secret
-  Imagepullsecret:'tobesetlater'
+  ImagePullSecret: 'ImagePullSecret'  
   #my sql database name
   mysqldb: 'employee_prod'
   VSTS_ARM_REST_IGNORE_SSL_ERRORS: true
@@ -225,8 +225,6 @@ stages:
              inputs:
               action: deploy
               namespace: "default"
-              imagePullSecrets:
-              - name: $Imagepullsecret
               kubernetesServiceConnection: "AKSClusterConnection"  
               manifests: |
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
