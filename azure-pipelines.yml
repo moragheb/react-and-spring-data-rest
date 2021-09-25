@@ -212,8 +212,8 @@ stages:
               namespace: "default"
               kubernetesServiceConnection: "AKSClusterConnection"
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
+                $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
               containers: |
                 $(acr_container_nam)/"SpringAppImage:latest"           
                   
