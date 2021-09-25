@@ -225,7 +225,7 @@ stages:
                action:  "createSecret"
                kubernetesServiceConnection: $(AKS_ServiceConn)
                namespace: "default"
-               secretName: '$ACRSecret'
+               secretName: '$ImagePullSecret'
                secretType: 'dockerRegistry'
                dockerRegistryEndpoint: $(ACR_ServiceConn)  
            - task  : "KubernetesManifest@0"
