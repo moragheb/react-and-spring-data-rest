@@ -145,8 +145,6 @@ stages:
                 inlineScript: |
                   #create the web service plan
                   az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
-                  Write-Host "##vso[task.setvariable variable=SpId;]$env:servicePrincipalId"
-                  Write-Host "##vso[task.setvariable variable=SpKey;]$env:servicePrincipalKey"
                   #set the auto Scale on the  app service plan
                   az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
                   az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage > 70 avg 10m" --scale out 3
