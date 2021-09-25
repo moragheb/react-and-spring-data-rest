@@ -215,5 +215,5 @@ stages:
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
                 $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
               containers: |
-                $(acr_container_nam)/"SpringAppImage:latest"           
+                $(acr_container_name)/"SpringAppImage:latest"           
                   
