@@ -93,7 +93,7 @@ stages:
           condition: succeededOrFailed()    
 - stage: Dockerbuild
   displayName: 'build the docker image and push to  Azure Container registry'
-  dependsOn:
+  dependsOn: |
   -'Build'
   -'Compile'
   pool:
