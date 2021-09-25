@@ -164,7 +164,7 @@ stages:
                   #use the system manged identity to reach the image in the image registry
                   $SubscriptionID = az account show --query id -o tsv
                   #$principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
-                  az role assignment create --assignee $(ARM_CLIENT_ID) --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
+                  az role assignment create --assignee $ARM_CLIENT_ID --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
                   az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
 
                   
