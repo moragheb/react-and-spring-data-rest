@@ -62,7 +62,7 @@ stages:
     steps:
         - task: Maven@3
           inputs:
-            mavenPomFile: 'pom.xml'
+            mavenPomFile: '$(System.DefaultWorkingDirectory)/pom.xml'
             options: 'clean'
             publishJUnitResults: true
             testResultsFiles: '**/surefire-reports/TEST-*.xml'
