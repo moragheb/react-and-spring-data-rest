@@ -228,19 +228,19 @@ stages:
                secretName: $(ImagePullSecret)
                secretType: 'dockerRegistry'
                dockerRegistryEndpoint: $(ACR_ServiceConn)  
-           - task  : "KubernetesManifest@0"
-             displayName: Deploy to Kubernetes cluster
-             inputs:
-              action: deploy
-              namespace: 'default'
-              kubernetesServiceConnection: $(AKS_ServiceConn)
-              imagePullSecrets: |
-                    $(imagePullSecret)
-              manifests: |
-                $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
-                $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
-              containers: |
-                $(acr_container_name)/"SpringAppImage:latest" 
+         #  - task  : "KubernetesManifest@0"
+         #    displayName: Deploy to Kubernetes cluster
+         #    inputs:
+         #     action: deploy
+         #     namespace: 'default'
+         #     kubernetesServiceConnection: $(AKS_ServiceConn)
+         #     imagePullSecrets: |
+         #           $(imagePullSecret)
+         #     manifests: |
+         #       $(Pipeline.Workspace)/manifests/reactandspringdatarest-deployment.yml
+         #       $(Pipeline.Workspace)/manifests/reactandspringdatarest-service.yml
+         #     containers: |
+         #       $(acr_container_name)/"SpringAppImage:latest" 
 
 
 
