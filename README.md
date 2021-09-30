@@ -41,10 +41,12 @@ the code can be build using an Azure hosted agent and automated code coverage te
 1-Azure Resources Manager Service Connection
 
 2-Kubernetes Service Connection
-
+ use an existing AKS in the the tenant or create a new one using the below power shell  cmdlet :
+   az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
 3-Docker Registry Service Connection
-
-use any existing service as those will be dynamically updated in the build)\*
+   use an existing ACR  in the the tenant or create a new one using the below power shell  cmdlet :
+   az aks create --resource-group $(varResoursegroupname) --name $($(acr_container_name)  --sku basic
+## use any existing service as those will be dynamically updated in the build)\*
 
 (alternatively those could be automated using an Azure CLITask and using the az devops service-endpoint cmdlet)\*\*
 
