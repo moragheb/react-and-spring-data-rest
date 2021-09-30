@@ -17,6 +17,7 @@ Docker File and Kubernetes Manifsts file created to push the custom Image of hos
 ## 4-Source code :
 
 the code can be build using an Azure hosted agent and automated code coverage tests to be taken using JaCoco
+
 -----------------------------------------------------------------------------------------------------------------
 # **Prerequisites**
 
@@ -27,6 +28,7 @@ the code can be build using an Azure hosted agent and automated code coverage te
 3-Azure Devops Account with ability to create projects and import pipelines as well as setup service connections or service prinicpals and environment variables
 
 4- Azure account that is able  to create the Service principal for the connections needs to have at least a contributor role on the subscription or resource group where it will host the azure resources created during the deployment
+
 -----------------------------------------------------------------------------------------------------------------
 # **Installation**
 
@@ -58,6 +60,7 @@ the code can be build using an Azure hosted agent and automated code coverage te
 4-update the Variable values inthe variables section of the pipeline yaml :
 
 5-run the pipeline and observe the stages and environments as they are getting spun up
+
 -----------------------------------------------------------------------------------------------------------------
 
 **CI/CD Stages breakdown**
@@ -71,9 +74,9 @@ in this stage docker build and Kubectl manifest is executed to build the needed 
 ## 4-Staging Web App with slot and application insight and azure monitor enabled:
  push the docker image from the ACR to a web app with staging slot and ASP with auto scaling configured (on a CPU Metric just for POC)
 ## 5-build the Production environment 
-: create the AKS cluster and upload the DACPAC to the a newly created ny DB ( this feature is not implemented)
+ create the AKS cluster and upload the DACPAC to the a newly created ny DB ( this feature is not implemented)
 ## 6-publish to AKS Cluster 
-: publish the docker images to single POD with load balancing enabled for auto monitoring and auditing using an Image pull secret
+ publish the docker images to single POD with load balancing enabled for auto monitoring and auditing using an Image pull secret
 
 -----------------------------------------------------------------------------------------------------------------
 
