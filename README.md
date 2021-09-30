@@ -2,11 +2,11 @@
 
 the below Repo contains the following:
 
-## 1- Azure-pipelines yaml file :
+## 1-Azure-pipelines yaml file :
 
 to run the CI CD pipeline and setup the stages and environments (end to end Config as code)
 
-## 2- Azure ARM  json Template :
+## 2-Azure ARM  json Template :
 
 this contains a JSON template to show how IOC can be deployed multiple time with diffrent configurations\Parameters
 
@@ -14,7 +14,7 @@ this contains a JSON template to show how IOC can be deployed multiple time with
 
 Docker File and Kubernetes Manifsts file created to push the custom Image of hosting the app to Azure container registry and on the production step to deploy the Image to Kubernetes service cluster
 
-## 4- Source code :
+## 4-Source code :
 
 the code can be build using an Azure hosted agent and automated code coverage tests to be taken using JaCoco
 
