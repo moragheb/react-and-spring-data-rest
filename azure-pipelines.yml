@@ -200,34 +200,34 @@ stages:
                       $ACR_REGISTRY_ID=$(az acr show --name $(acr_container_name) --query id --output tsv)                      
                       #az role assignment create --assignee $(ARM_CLIENT_ID) --scope $ACR_REGISTRY_ID --role acrpull
 
-- stage: deployimagetoAKSanddacpactosql
-  displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
-  dependsOn: 'createproductionencironemnt'
-  variables:
-    ImagePullSecret: k8sraghebsecret  
-  pool:
-    vmImage: 'ubuntu-latest'
-  jobs:
-  - deployment: 'deployapptoAKS'
-    displayName: 'deploy the AKS Cluster'
-    pool:
-      vmImage: 'ubuntu-latest'
-    environment: 'prod'
-    strategy:
-      runOnce:
-        deploy:
-         steps: 
-           - checkout: self
+#- stage: deployimagetoAKSanddacpactosql
+#  displayName: 'deploy to AKS cluser and upload the DACPAC to the mysqldb'
+#  dependsOn: 'createproductionencironemnt'
+#  variables:
+#    ImagePullSecret: k8sraghebsecret  
+#  pool:
+#    vmImage: 'ubuntu-latest'
+#  jobs:
+#  - deployment: 'deployapptoAKS'
+#    displayName: 'deploy the AKS Cluster'
+#    pool:
+#      vmImage: 'ubuntu-latest'
+#    environment: 'prod'
+#    strategy:
+#      runOnce:
+#        deploy:
+#         steps: 
+#           - checkout: self
         
-           - task:  "KubernetesManifest@0"
-             displayName: "Create an image pull secret"
-             inputs:
-               action:  "createSecret"
-               kubernetesServiceConnection: $(AKS_ServiceConn)
-               namespace: 'default'
-               secretName: $(ImagePullSecret)
-               secretType: 'dockerRegistry'
-               dockerRegistryEndpoint: $(ACR_ServiceConn)  
+#           - task:  "KubernetesManifest@0"
+#             displayName: "Create an image pull secret"
+#             inputs:
+#               action:  "createSecret"
+#               kubernetesServiceConnection: $(AKS_ServiceConn)
+#               namespace: 'default'
+#               secretName: $(ImagePullSecret)
+#               secretType: 'dockerRegistry'
+#               dockerRegistryEndpoint: $(ACR_ServiceConn)  
          #  - task  : "KubernetesManifest@0"
          #    displayName: Deploy to Kubernetes cluster
          #    inputs:
