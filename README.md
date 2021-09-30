@@ -51,7 +51,7 @@ the code can be build using an Azure hosted agent and automated code coverage te
    use an existing ACR  in the the tenant or create a new one using the below power shell  cmdlet :
      
      az aks create --resource-group $(varResoursegroupname) --name $($(acr_container_name)  --sku basic
-  ## use any existing service as those will be dynamically updated in the build)\*
+ use any existing service as those will be dynamically updated in the build)\*
 
 (alternatively those could be automated using an Azure CLITask and using the az devops service-endpoint cmdlet)\*\*
 
