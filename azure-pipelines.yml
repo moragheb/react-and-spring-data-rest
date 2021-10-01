@@ -11,9 +11,9 @@ variables:
   #Azyre mysql server name
   mysqlsever_name: 'raghebspringsqlserver'
   #azure web app name for staging environemnt
-  Webapp_Name: 'raghebspringbootlatestreactapp'
+  Webapp_Name: 'raghebspringbootlatestwithreactapp'
   #azure Kubernets Cluster name
-  AKSClustername: 'raghebspringakscluster'
+  AKSClustername: 'raghebspringakslatestcluster'
   #Service Connections name
   AZ_ServiceConn: 'Arm-ServiceConnection'
   AKS_ServiceConn: 'AKSClusterConnection'
@@ -192,7 +192,7 @@ stages:
                       #create an AKS Cluster
                       $ARM_CLIENT_ID=$servicePrincipalId 
                       $ARM_CLIENT_Key=$servicePrincipalKey
-                      #az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
+                      az aks create --resource-group $(varResoursegroupname) --name $(AKSClustername) --node-count 1 --enable-addons monitoring --generate-ssh-keys
                       az aks update -n $(AKSClustername) -g $(varResoursegroupname) --attach-acr $(acr_container_name)
                       #create the SQL DB
                       az mysql db create --name $(mysqldb) --resource-group $(varResoursegroupname)  --server-name $(mysqlsever_name)
