@@ -2,8 +2,6 @@ version: '3.4'
 services:
   reactandspringdatarest-frontend:
     image: reactandspringdatarest-frontend:latest
-    context:  .
-    dockerfile: ./frontend.DockerFile
     environment:
       PORT: 3000
       PROXY_API: https://localhost:8080/
@@ -11,10 +9,7 @@ services:
       - 3000:3000
   reactandspringdatarest-backend:
     image: reactandspringdatarest-backend:latest
-    context:  .
-    dockerfile: ./backend.DockerFile
     ports:
       - 8080:8080
-
 
 
