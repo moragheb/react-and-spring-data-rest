@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: moraghebreactandspringdatarest 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moraghebreactandspringdatarest
+  template:
+    metadata:
+      labels:
+        app: moraghebreactandspringdatarest 
+    spec:
+      containers:
+        - name: moraghebreactandspringdatarest 
+          image: acrraghebspringimages.azurecr.io/moraghebreactandspringdatarest
+          ports:
+          - containerPort: 8080
