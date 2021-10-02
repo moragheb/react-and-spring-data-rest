@@ -123,12 +123,26 @@ stages:
             buildContext: .
 
         - task: Docker@1
+
           displayName: 'Push Image'
           inputs:
             azureSubscriptionEndpoint: $(AZ_ServiceConn)
             azureContainerRegistry: $(acr_container_name).azurecr.io
             command: 'Push an image'
             imageName: 'SpringAppImage'
+
+        - task: Docker@2
+          displayName: Build and push an image to container registry
+          inputs:
+            command: buildAndPush
+            repository: $(imageRepository)
+            dockerfile: $(dockerfilePath)
+            containerRegistry: $(dockerRegistryServiceConnection)
+            tags: |
+              $(tag)
+
+        - upload: manifests
+          artifact: manifests
 - stage: Stagingwebapp
   displayName: 'deploy the image to azure web app for contianers'
   dependsOn: 'Dockerbuild'
