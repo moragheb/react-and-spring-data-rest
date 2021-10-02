@@ -16,7 +16,7 @@ variables:
   AKSClustername: 'raghebspringakslatestcluster'
   #Service Connections name
   AZ_ServiceConn: 'Arm-ServiceConnection'
-  AKS_ServiceConn: 'AKSClusterConnection'
+  AKS_ServiceConn: 'raghebspringakslatestcluster-default'
   ACR_ServiceConn: 'ACRConnection'     
   dockerRegistryServiceConnection: 'ACRConnection'
   imageRepository: 'moraghebreactandspringdatarest'
@@ -226,6 +226,7 @@ stages:
              displayName: "Create imagePullSecret"
              inputs:
               action: createSecret
+              kubernetesServiceConnection: $(AKS_ServiceConn)
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
@@ -233,6 +234,7 @@ stages:
              displayName: "deploy to cluster"
              inputs:
                 action: deploy
+                kubernetesServiceConnection: $(AKS_ServiceConn)
                 manifests: |
                   $(Pipeline.Workspace)/manifests/deployment.yml
                   $(Pipeline.Workspace)/manifests/service.yml
