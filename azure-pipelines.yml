@@ -130,7 +130,7 @@ stages:
             command: 'Push an image'
             imageName: 'SpringAppImage'
 - stage: Stagingwebapp
-  displayName: 'deploy the iage to azure web app for contianers'
+  displayName: 'deploy the image to azure web app for contianers'
   dependsOn: 'Dockerbuild'
   jobs:
   - deployment: 'buildstagewebapp'
