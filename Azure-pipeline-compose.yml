@@ -95,40 +95,11 @@ stages:
             PathtoPublish: '$(build.artifactstagingdirectory)'
             ArtifactName: 'Package-build'
           condition: succeededOrFailed()    
-- stage: Dockerbuild
-  displayName: 'build the docker image with built hosted jar  and push to  Azure Container registry'
-  dependsOn: 
-  - 'Build'
-  - 'Compile'
-  pool:
-    vmImage: 'ubuntu-latest'
-  jobs:
-  - job: dockerpush
-    steps:
-        - task: Docker@1
-          displayName: 'build an image'
-          inputs:
-            azureSubscriptionEndpoint: $(AZ_ServiceConn)
-            azureContainerRegistry: $(acr_container_name).azurecr.io
-            dockerFile: Dockerfile
-            imageName: 'SpringAppImage'
-            includeLatestTag: true
-            useDefaultContext: false
-            buildContext: .
-
-        - task: Docker@1
-          displayName: 'Push Image'
-          inputs:
-            azureSubscriptionEndpoint: $(AZ_ServiceConn)
-            azureContainerRegistry: $(acr_container_name).azurecr.io
-            command: 'Push an image'
-            imageName: 'SpringAppImage'
 - stage: DockerComposeBuild
   displayName: 'build the docker Compose and push to  Azure Container registry'
   dependsOn: 
   - 'Build'
   - 'Compile'
-  - 'Dockerbuild'
   pool:
     vmImage: 'ubuntu-latest'
   jobs:
@@ -139,6 +110,7 @@ stages:
         containerregistrytype: 'Azure Container Registry'
         azureSubscription: 'Arm-ServiceConnection'
         azureContainerRegistry: '$acr_container_name'
+        additionalImageTags: $(Build.BuildId)        
         dockerComposeFile: '**/docker-compose.yml'
         action: 'Build services'
     - task: DockerCompose@0
@@ -151,51 +123,17 @@ stages:
         includeSourceTags: true
         includeLatestTag: true
         
-- stage: Stagingwebapp
-  displayName: 'push the docker image to a web app with staging slot and ASP with auto scaling configured'
-  dependsOn: 'Dockerbuild'
-  jobs:
-  - deployment: 'buildstagewebapp'
-    displayName: 'deploy the stage web app'
-    pool:
-      vmImage: 'windows-latest'
-    environment: 'stage'
-    strategy:
-      runOnce:
-        deploy:
-         steps: 
-           - checkout: self
-           -   task: AzureCLI@2
-               inputs:
-                azureSubscription: 'Arm-ServiceConnection'
-                addSpnToEnvironment: true
-                scriptType: ps
-                scriptLocation: 'inlineScript'
-                inlineScript: |
-                  #create the web service plan
-                  $ARM_CLIENT_ID=$servicePrincipalId
-                  az appservice plan create --name $(app_service_plan) --resource-group $(varResoursegroupname)  --is-linux --sku S1
-                  #set the auto Scale on the  app service plan
-                  az monitor autoscale create  --resource-group $(varResoursegroupname) --resource $(app_service_plan) --resource-type Microsoft.Web/serverFarms --name autoscale --count 2 --min-count 2 --max-count 5 --count 2
-                  az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage > 70 avg 10m" --scale out 3
-                  az monitor autoscale rule create  --resource-group $(varResoursegroupname) --autoscale-name autoscale  --condition "CpuPercentage < 30  avg 10m" --scale in 1
-                  
-                  #create the Web App
-                  az webapp create --resource-group $(varResoursegroupname) --plan $(app_service_plan) --name $(Webapp_Name) --deployment-container-image-name $(acr_container_name).azurecr.io/springappimage:latest
-                  
-                  #create the Deployment Slot
-                  az webapp deployment slot create --name $(Webapp_Name) --resource-group $(varResoursegroupname) --slot staging
-                  
-                  #set the web app ruunning port
-                  az webapp config appsettings set --resource-group $(varResoursegroupname) --name $(Webapp_Name) --settings WEBSITES_PORT=8080
-
-                  #use the system manged identity to reach the image in the image registry
-                  $SubscriptionID = az account show --query id -o tsv
-                  #$principal_ID=az webapp identity assign --resource-group $(varResoursegroupname) --name $(Webapp_Name) --query principalId -o tsv 
-                  az role assignment create --assignee $ARM_CLIENT_ID --scope /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.ContainerRegistry/registries/acrspringbootimages --role "AcrPull"
-                  az resource update --ids /subscriptions/$SubscriptionID/resourceGroups/$(varResoursegroupname)/providers/Microsoft.Web/sites/$(Webapp_Name)/config/web --set properties.acrUseManagedIdentityCreds=True
-                  #pull the image and deploy it 
-                  az webapp config container set  --name $(Webapp_Name) --resource-group $(varResoursegroupname) --docker-custom-image-name $(acr_container_name).azurecr.io/springappimage:latest --docker-registry-server-url https://$(acr_container_name).azurecr.io
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(system.defaultworkingdirectory)'
+        Contents: '**/*.yml'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'manifest'
+        publishLocation: 'Container'
+      condition:  succeededOrFailed()  
 - stage: createproductionencironemnt
   displayName: 'create production AKS CLuster and grant it access to the registry also upload the DACPAC of the Expored mySQL DB to the '
   dependsOn: 'Stagingwebapp'
