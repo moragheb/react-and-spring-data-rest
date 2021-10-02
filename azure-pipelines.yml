@@ -92,12 +92,6 @@ stages:
           condition: succeededOrFailed()
         
         - task: PublishBuildArtifacts@1
-          displayName: 'public the Kubernettes manifest file'
-          inputs:
-            PathtoPublish: '$(Pipeline.Workspace)/s/Kubernetes'
-            ArtifactName: 'manifests'
-          condition: succeededOrFailed()   
-        - task: PublishBuildArtifacts@1
           displayName: 'Publish Artifact: Package-build'
           inputs:
             PathtoPublish: '$(build.artifactstagingdirectory)'
@@ -143,6 +137,7 @@ stages:
 
         - upload: manifests
           artifact: manifests
+          
 - stage: Stagingwebapp
   displayName: 'deploy the image to azure web app for contianers'
   dependsOn: 'Dockerbuild'
