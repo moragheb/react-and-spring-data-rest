@@ -11,7 +11,7 @@ variables:
   #Azyre mysql server name
   mysqlsever_name: 'raghebspringsqlserver'
   #azure web app name for staging environemnt
-  Webapp_Name: 'raghebspringbootlatestwithreactapp'
+  Webapp_Name: 'raghebspringbootlatestwithcomposereactapp'
   #azure Kubernets Cluster name
   AKSClustername: 'raghebspringakslatestcluster'
   #Service Connections name
@@ -123,6 +123,34 @@ stages:
             azureContainerRegistry: $(acr_container_name).azurecr.io
             command: 'Push an image'
             imageName: 'SpringAppImage'
+- stage: DockerComposeBuild
+  displayName: 'build the docker Compose and push to  Azure Container registry'
+  dependsOn: 
+  - 'Build'
+  - 'Compile'
+  - 'Dockerbuild'
+  pool:
+    vmImage: 'ubuntu-latest'
+  jobs:
+  - job: dockercomposepush
+    steps:
+    - task: DockerCompose@0
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscription: 'Arm-ServiceConnection'
+        azureContainerRegistry: '$acr_container_name'
+        dockerComposeFile: '**/docker-compose.yml'
+        action: 'Build services'
+    - task: DockerCompose@0
+      inputs:
+        containerregistrytype: 'Azure Container Registry'
+        azureSubscription: 'Arm-ServiceConnection'
+        azureContainerRegistry: '$acr_container_name'
+        dockerComposeFile: '**/docker-compose.yml'
+        action: 'Push services'
+        includeSourceTags: true
+        includeLatestTag: true
+        
 - stage: Stagingwebapp
   displayName: 'push the docker image to a web app with staging slot and ASP with auto scaling configured'
   dependsOn: 'Dockerbuild'
