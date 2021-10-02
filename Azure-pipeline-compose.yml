@@ -9,7 +9,7 @@ variables:
   #Azure Resource group name
   varResoursegroupname: 'raghebspringrg'
   #Azyre mysql server name
-  mysqlsever_name: 'raghebspringsqlserver'
+  mysqlsever_name: 'raghebspringcomposesqlserver'
   #azure web app name for staging environemnt
   Webapp_Name: 'raghebspringbootlatestwithcomposereactapp'
   #azure Kubernets Cluster name
