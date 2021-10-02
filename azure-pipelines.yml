@@ -1,6 +1,8 @@
 
 trigger:
 - master
+resources:
+- repo: self
 variables:
   #Azure containter Registry name 
   acr_container_name: 'acrraghebspringimages'
@@ -136,7 +138,7 @@ stages:
             repository: '$(imageRepository)'
             command: 'buildAndPush'
             Dockerfile: 'Dockerfile'
-            buildContext: '$(dockerfilePath)'
+            buildContext: '.'
             tags: '$(tag)'
 
         - upload: manifests
