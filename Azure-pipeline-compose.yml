@@ -136,7 +136,7 @@ stages:
       condition:  succeededOrFailed()  
 - stage: createproductionencironemnt
   displayName: 'create production AKS CLuster and grant it access to the registry also upload the DACPAC of the Expored mySQL DB to the '
-  dependsOn: 'Stagingwebapp'
+  dependsOn: 'DockerComposeBuild'
   jobs:
   - deployment: 'buildtheAKSCluster'
     displayName: 'deploy the prod environemnt'
