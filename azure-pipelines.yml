@@ -135,7 +135,7 @@ stages:
             containerRegistry: 'acrraghebspringimages'
             repository: '$(imageRepository)'
             command: 'buildAndPush'
-            Dockerfile: '**/Dockerfile'
+            Dockerfile: 'Dockerfile'
             buildContext: '$(dockerfilePath)'
             tags: '$(tag)'
 
