@@ -11,7 +11,7 @@ variables:
   #Azyre mysql server name
   mysqlsever_name: 'raghebspringsqlserver'
   #azure web app name for staging environemnt
-  Webapp_Name: 'raghebspringbootlatestwithreactapp'
+  Webapp_Name: 'raghebspringbootakslatestwithreactapp'
   #azure Kubernets Cluster name
   AKSClustername: 'raghebspringakslatestcluster'
   #Service Connections name
