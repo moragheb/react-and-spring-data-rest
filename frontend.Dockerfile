@@ -7,7 +7,7 @@ RUN mkdir -p /app
 WORKDIR /app
 
 
-COPY frontend/package*.json ./
+COPY ./package*.json ./
 
 # Install node packages
 RUN npm install
