@@ -228,7 +228,7 @@ stages:
     displayName: 'deploy the AKS Cluster'
     pool:
       vmImage: 'ubuntu-latest'
-    environment: '$(imageRepository).default'
+    environment: '$(AKS_ServiceConn)'
     strategy:
       runOnce:
         deploy:
@@ -237,6 +237,7 @@ stages:
            - task: "KubernetesManifest@0"
              displayName: "Create imagePullSecret"
              inputs:
+              namespace: default
               action: createSecret
               kubernetesServiceConnection: $(AKS_ServiceConn)
               secretName: $(imagePullSecret)
@@ -247,7 +248,7 @@ stages:
              inputs:
                 action: deploy
                 kubernetesServiceConnection: $(AKS_ServiceConn)
-
+                namespace: default
                 manifests: |
                   $(Pipeline.Workspace)/manifests/deployment.yml
                   $(Pipeline.Workspace)/manifests/service.yml
