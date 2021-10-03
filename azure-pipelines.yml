@@ -130,11 +130,10 @@ stages:
         - task: Docker@2
           inputs:
             containerRegistry: 'ACRConnection'
-            repository: '''$(imageRepository)'''
+            repository: $(imageRepository)'
             command: 'buildAndPush'
-            Dockerfile: '**/Dockerfile'
-            buildContext: '$(dockerfilePath)'
-            tags: '''$(tag)'''
+            Dockerfile: '$(dockerfilePath)'
+            tags: '$(tag)'
 
           
 - stage: Stagingwebapp
