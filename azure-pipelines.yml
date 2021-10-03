@@ -226,7 +226,7 @@ stages:
     displayName: 'deploy the AKS Cluster'
     pool:
       vmImage: 'ubuntu-latest'
-    environment: 'moraghebreactandspringdatarest.default'
+    environment: '$(imageRepository).default'
     strategy:
       runOnce:
         deploy:
@@ -245,6 +245,7 @@ stages:
              inputs:
                 action: deploy
                 kubernetesServiceConnection: $(AKS_ServiceConn)
+
                 manifests: |
                   $(Pipeline.Workspace)/manifests/deployment.yml
                   $(Pipeline.Workspace)/manifests/service.yml
