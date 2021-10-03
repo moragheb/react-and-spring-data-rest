@@ -22,8 +22,10 @@ variables:
   ACR_ServiceConn: 'ACRConnection'     
   dockerRegistryServiceConnection: 'ACRConnection'
   imageRepository: 'moraghebreactandspringdatarest'
-  containerRegistry: 'acrraghebspringimages.azurecr.io'
+  containerRegistry: '$(acr_container_name).azurecr.io'
+  #DockerFile Path on Target
   dockerfilePath: '**/Dockerfile'
+  #Image Tag name 
   tag: '$(Build.BuildId)'
   imagePullSecret: 'acrraghebspringimages2a00-auth'  
   #my sql database name
