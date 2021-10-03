@@ -127,6 +127,15 @@ stages:
             command: 'Push an image'
             imageName: 'SpringAppImage'
 
+        - task: Docker@2
+          inputs:
+            containerRegistry: 'ACRConnection'
+            repository: '''$(imageRepository)'''
+            command: 'buildAndPush'
+            Dockerfile: '**/Dockerfile'
+            buildContext: '$(dockerfilePath)'
+            tags: '''$(tag)'''
+
           
 - stage: Stagingwebapp
   displayName: 'deploy the image to azure web app for contianers'
