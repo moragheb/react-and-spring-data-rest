@@ -23,7 +23,7 @@ variables:
   dockerRegistryServiceConnection: 'ACRConnection'
   imageRepository: 'moraghebreactandspringdatarest'
   containerRegistry: 'acrraghebspringimages.azurecr.io'
-  dockerfilePath: 'Dockerfile'
+  dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'acrraghebspringimages2a00-auth'  
   #my sql database name
@@ -129,11 +129,10 @@ stages:
 
         - task: Docker@2
           inputs:
-            containerRegistry: 'ACRConnection'
+            containerRegistry: '1818bd9b-2bfd-4d80-8d6b-f543a8557a56'
             repository: $(imageRepository)
             command: 'buildAndPush'
-            Dockerfile: 'Dockerfile'
-            buildContext: .
+            Dockerfile: $(dockerfilePath)
             tags: $(tag)
 
           
