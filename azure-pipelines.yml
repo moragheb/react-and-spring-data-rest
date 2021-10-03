@@ -19,7 +19,7 @@ variables:
   #Service Connections name
   AZ_ServiceConn: 'Arm-ServiceConnection'
   AKS_ServiceConn: 'raghebspringakslatestcluster-default'
-  #ACR_ServiceConn: 'ACRConnection'     
+  ACR_ServiceConn: 'ACRConnection'     
   dockerRegistryServiceConnection: 'ACRConnection'
   imageRepository: 'moraghebreactandspringdatarest'
   containerRegistry: 'acrraghebspringimages.azurecr.io'
