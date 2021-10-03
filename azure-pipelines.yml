@@ -19,7 +19,7 @@ variables:
   #Service Connections name
   AZ_ServiceConn: 'Arm-ServiceConnection'
   AKS_ServiceConn: 'raghebspringakslatestcluster-default'
-  ACR_ServiceConn: 'ACRConnection'     
+  #ACR_ServiceConn: 'ACRConnection'     
   dockerRegistryServiceConnection: 'ACRConnection'
   imageRepository: 'moraghebreactandspringdatarest'
   containerRegistry: 'acrraghebspringimages.azurecr.io'
@@ -128,11 +128,10 @@ stages:
             imageName: 'SpringAppImage'
         - task: Docker@2
           inputs:
-            containerRegistry: 'acrraghebspringimages'
+            containerRegistry: '$(containerRegistry)'
             repository: '$(imageRepository)'
             command: 'buildAndPush'
-            Dockerfile: 'Dockerfile'
-            buildContext: '.'
+            Dockerfile: $(dockerfilePath)
             tags: '$(tag)'
 
         - upload: manifests
@@ -225,7 +224,7 @@ stages:
     displayName: 'deploy the AKS Cluster'
     pool:
       vmImage: 'ubuntu-latest'
-    environment: 'prod'
+    environment: 'moraghebreactandspringdatarest.default'
     strategy:
       runOnce:
         deploy:
