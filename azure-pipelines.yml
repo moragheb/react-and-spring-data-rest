@@ -129,7 +129,7 @@ stages:
 
         - task: Docker@2
           inputs:
-            containerRegistry: '1818bd9b-2bfd-4d80-8d6b-f543a8557a56'
+            containerRegistry: 'ACRConnection'
             repository: $(imageRepository)
             command: 'buildAndPush'
             Dockerfile: $(dockerfilePath)
