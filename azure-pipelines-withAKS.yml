@@ -11,7 +11,7 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'e8c4737b-f1bf-49e4-bb3b-7fd0ea8b259d'
+  dockerRegistryServiceConnection: 'd72ef9d3-73f7-4baa-ba9f-b1fe04522128'
   imageRepository: 'moraghebreactandspringdatarest'
   containerRegistry: 'acrraghebspringimages.azurecr.io'
   dockerfilePath: '**/Dockerfile'
