@@ -23,8 +23,8 @@ variables:
   dockerRegistryServiceConnection: 'ACRConnection'
   imageRepository: 'moraghebreactandspringdatarest'
   containerRegistry: 'acrraghebspringimages.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
-  tag: 'latest'
+  dockerfilePath: 'Dockerfile'
+  tag: '$(Build.BuildId)'
   imagePullSecret: 'acrraghebspringimages2a00-auth'  
   #my sql database name
   mysqldb: 'employee_prod'
