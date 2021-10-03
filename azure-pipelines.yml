@@ -132,7 +132,8 @@ stages:
             containerRegistry: 'ACRConnection'
             repository: $(imageRepository)'
             command: 'buildAndPush'
-            Dockerfile: '$(dockerfilePath)'
+            Dockerfile: 'Dockerfile'
+            buildContext: .
             tags: '$(tag)'
 
           
