@@ -126,13 +126,6 @@ stages:
             azureContainerRegistry: $(acr_container_name).azurecr.io
             command: 'Push an image'
             imageName: 'SpringAppImage'
-        - task: Docker@2
-          inputs:
-            containerRegistry:  $(acr_container_name).azurecr.io
-            repository: '$(imageRepository)'
-            command: 'buildAndPush'
-            Dockerfile: $(dockerfilePath)
-            tags: '$(tag)'
 
           
 - stage: Stagingwebapp
